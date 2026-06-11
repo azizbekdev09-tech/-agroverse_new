@@ -12,11 +12,10 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy import Column, Integer, String, Float, DateTime, Text, select
 
 # ─── Database setup ───────────────────────────────────────────
-DATABASE_URL = os.getenv("DATABASE_URL")
-if not DATABASE_URL:
-    raise ValueError("DATABASE_URL не установлена!")
-
-DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://")
+DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    "postgresql+asyncpg://postgres:lRrjQszvnZZlqeQirdiiKzyXfteFgoIM@postgres.railway.internal:5432/railway"
+).replace("postgresql://", "postgresql+asyncpg://").replace("postgres://", "postgresql+asyncpg://")
 
 engine = create_async_engine(DATABASE_URL, echo=False)
 AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
@@ -65,7 +64,7 @@ app = FastAPI(title="AgroVerse API", version="3.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://agroversenew-production.up.railway.app"],
+    allow_origins=["*"],
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],

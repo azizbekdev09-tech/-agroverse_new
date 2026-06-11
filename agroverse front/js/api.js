@@ -2,7 +2,7 @@
 const IS_LOCAL = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
 const BASE_URL = IS_LOCAL
   ? `http://localhost:8000`
-  : 'https://fearless-learning-production-00ca.up.railway.app';
+  : 'https://agroverse-production-8df1.up.railway.app';
 
 
 function getToken() {
