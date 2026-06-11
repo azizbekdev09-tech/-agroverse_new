@@ -1459,36 +1459,37 @@ a, button, .nav-link, .nav-logo, .cat-card, .cat-tab, .product-card,
 }
 
 /* ============================================================
-   HERO FULLSCREEN (проблема 1)
+   HERO FULLSCREEN (проблема 1) — на весь экран, без контейнера
    ============================================================ */
 .hero.hero-fullscreen {
-  border-radius: 16px;
-  min-height: calc(100vh - 100px);
+  border-radius: 0 !important;
+  min-height: 100vh;
+  width: calc(100vw) !important;
   display: flex;
   align-items: center;
-  padding: clamp(60px, 8vw, 120px) clamp(40px, 6vw, 90px);
-  background:
-    url('../assets/hero-field.png') center/cover no-repeat;
-  border: none;
-  margin-bottom: 72px;
+  padding: clamp(80px, 10vw, 140px) clamp(32px, 8vw, 120px);
+  background: url('../assets/hero-field.png') center/cover no-repeat;
+  border: none !important;
+  margin: -110px -28px 80px -28px;
   position: relative;
   overflow: hidden;
+  box-sizing: border-box;
 }
 .hero.hero-fullscreen .hero-bg-overlay {
   position: absolute;
   inset: 0;
   background: linear-gradient(
     110deg,
-    rgba(0,0,0,0.72) 0%,
-    rgba(0,0,0,0.50) 50%,
-    rgba(0,0,0,0.15) 100%
+    rgba(0,0,0,0.78) 0%,
+    rgba(0,0,0,0.55) 45%,
+    rgba(0,0,0,0.20) 100%
   );
   z-index: 0;
 }
 .hero.hero-fullscreen .hero-content {
   position: relative;
   z-index: 2;
-  max-width: 620px;
+  max-width: 680px;
 }
 .hero.hero-fullscreen .hero-glow,
 .hero.hero-fullscreen .hero-grid-dots,
@@ -1715,3 +1716,15 @@ a, button, .nav-link, .nav-logo, .cat-card, .cat-tab, .product-card,
 .spin { animation: spinAnim 0.8s linear infinite; }
 @keyframes spinAnim { to { transform: rotate(360deg); } }
 
+
+/* ============================================================
+   HERO FULLSCREEN — fix overflow & mobile margins
+   ============================================================ */
+html, body { overflow-x: hidden; }
+
+@media (max-width: 760px) {
+  .hero.hero-fullscreen {
+    margin: -92px -16px 60px -16px;
+    padding: 100px 24px 60px;
+  }
+}
