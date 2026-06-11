@@ -9,7 +9,6 @@ import uvicorn
 
 from app.database import engine, Base, AsyncSessionLocal
 from app.config import settings
-
 from app.routers import auth, products, orders, payment, bonus, admin, ai
 
 ADMIN_PHONE = "админ123"
@@ -17,13 +16,16 @@ ADMIN_PASSWORD = "127845"
 
 
 async def seed_admin():
+    """Создаёт админа если его нет"""
     from sqlalchemy import select
     from app.models import User, UserRole, UserTariff
     from app.auth import get_password_hash
+    
     async with AsyncSessionLocal() as db:
         res = await db.execute(select(User).where(User.phone == ADMIN_PHONE))
         if res.scalar_one_or_none():
             return
+        
         admin = User(
             name="Администратор",
             phone=ADMIN_PHONE,
@@ -36,26 +38,36 @@ async def seed_admin():
         )
         db.add(admin)
         await db.commit()
-        print(f"👑 Админ создан — логин: {ADMIN_PHONE}, пароль: {ADMIN_PASSWORD}")
+        print(f"👑 Админ: {ADMIN_PHONE} / {ADMIN_PASSWORD}")
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    """Инициализация при старте и очистка при завершении"""
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
         from sqlalchemy import text
         await conn.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS block_reason TEXT"))
+    
     await seed_admin()
-    print("🌾 AgroVerse API запущен")
-    print("✅ CORS настроен для Railway")
+    print("🌾 AgroVerse API запущен на Railway")
+    print("✅ CORS разрешён для всех источников")
+    
     yield
     await engine.dispose()
 
 
-app = FastAPI(title="AgroVerse API", version="2.0", lifespan=lifespan)
+# ──── FastAPI приложение ────
+app = FastAPI(
+    title="AgroVerse API",
+    version="2.0",
+    lifespan=lifespan,
+    docs_url="/docs",
+    openapi_url="/openapi.json"
+)
 
 
-# Кастомный обработчик ошибок валидации — без бинарных данных
+# ──── Обработчик ошибок валидации ────
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     errors = []
@@ -72,13 +84,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     )
 
 
-# CORS — разрешаем всё для Railway деплоя
-CORS_HEADERS = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "*",
-    "Access-Control-Allow-Headers": "*",
-}
-
+# ──── CORS Middleware ────
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -90,34 +96,45 @@ app.add_middleware(
 )
 
 
+# ──── Доп. CORS хедеры для ошибок ────
 @app.middleware("http")
-async def add_cors_to_errors(request: Request, call_next):
+async def add_cors_headers(request: Request, call_next):
     response = await call_next(request)
     response.headers["Access-Control-Allow-Origin"] = "*"
     response.headers["Access-Control-Allow-Methods"] = "*"
     response.headers["Access-Control-Allow-Headers"] = "*"
     return response
 
+
+# ──── Статические файлы ────
 os.makedirs(settings.upload_dir, exist_ok=True)
 app.mount("/uploads", StaticFiles(directory=settings.upload_dir), name="uploads")
 
-app.include_router(auth.router)
-app.include_router(products.router)
-app.include_router(orders.router)
-app.include_router(payment.router)
-app.include_router(bonus.router)
-app.include_router(admin.router)
-app.include_router(ai.router)
+
+# ──── Роутеры ────
+app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
+app.include_router(products.router, prefix="/api/products", tags=["products"])
+app.include_router(orders.router, prefix="/api/orders", tags=["orders"])
+app.include_router(payment.router, prefix="/api/payment", tags=["payment"])
+app.include_router(bonus.router, prefix="/api/bonus", tags=["bonus"])
+app.include_router(admin.router, prefix="/api/admin", tags=["admin"])
+app.include_router(ai.router, prefix="/api/ai", tags=["ai"])
 
 
+# ──── Базовые endpoints ────
 @app.get("/")
 async def root():
-    return {"message": "🌾 AgroVerse API", "version": "2.0", "status": "running"}
+    return {
+        "message": "🌾 AgroVerse API",
+        "version": "2.0",
+        "status": "running",
+        "docs": "/docs"
+    }
 
 
 @app.get("/health")
 async def health():
-    return {"status": "healthy"}
+    return {"status": "healthy", "service": "agroverse-api"}
 
 
 if __name__ == "__main__":
