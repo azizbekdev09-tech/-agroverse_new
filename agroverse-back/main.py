@@ -14,7 +14,7 @@ from sqlalchemy import Column, Integer, String, Float, DateTime, Text, select
 # ─── Database setup ───────────────────────────────────────────
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "postgresql+asyncpg://postgres:lRrjQszvnZZlqeQirdiiKzyXfteFgoIM@postgres.railway.internal:5432/railway"
+    "postgresql://postgres:WkxzohXEeIWSLkoabIEBpbJScjGGCyiA@postgres.railway.internal:5432/railway"
 ).replace("postgresql://", "postgresql+asyncpg://").replace("postgres://", "postgresql+asyncpg://")
 
 engine = create_async_engine(DATABASE_URL, echo=False)
@@ -64,7 +64,7 @@ app = FastAPI(title="AgroVerse API", version="3.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["https://agroversenew-production.up.railway.app"],
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
