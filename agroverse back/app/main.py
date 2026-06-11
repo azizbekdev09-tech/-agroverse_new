@@ -73,6 +73,12 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 
 # CORS — разрешаем всё для Railway деплоя
+CORS_HEADERS = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "*",
+    "Access-Control-Allow-Headers": "*",
+}
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -82,6 +88,15 @@ app.add_middleware(
     expose_headers=["*"],
     max_age=600,
 )
+
+
+@app.middleware("http")
+async def add_cors_to_errors(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "*"
+    response.headers["Access-Control-Allow-Headers"] = "*"
+    return response
 
 os.makedirs(settings.upload_dir, exist_ok=True)
 app.mount("/uploads", StaticFiles(directory=settings.upload_dir), name="uploads")

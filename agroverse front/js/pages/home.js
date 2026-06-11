@@ -1,12 +1,12 @@
 /* pages/home.js — stiljli bosh sahifa (fermер va xaridor) */
 
 const HOME_CATEGORIES = [
-  { value: 'Овощи',     icon: '🥦', key: 'cat_vegetables', tint: '#10B981', img: 'assets/cat-vegetables.jpg' },
-  { value: 'Фрукты',    icon: '🍎', key: 'cat_fruits',     tint: '#F59E0B', img: 'assets/cat-fruits.jpg' },
-  { value: 'Зелень',    icon: '🌿', key: 'cat_greens',     tint: '#22C55E', img: 'assets/cat-greens.jpg' },
-  { value: 'Зерновые',  icon: '🌾', key: 'cat_grains',     tint: '#D97706', img: 'assets/cat-grains.jpg' },
-  { value: 'Молочные',  icon: '🥛', key: 'cat_dairy',      tint: '#3B82F6', img: 'assets/cat-dairy.jpg' },
-  { value: 'Мёд',       icon: '🍯', key: 'cat_honey',      tint: '#EAB308', img: 'assets/cat-honey.jpg' },
+  { value: 'Овощи',     icon: '🥦', key: 'cat_vegetables', tint: '#10B981', img: 'assets/cat-vegetables.jpg', bg: 'linear-gradient(135deg,#10B981,#059669)' },
+  { value: 'Фрукты',    icon: '🍎', key: 'cat_fruits',     tint: '#F59E0B', img: 'assets/cat-fruits.jpg',     bg: 'linear-gradient(135deg,#F59E0B,#D97706)' },
+  { value: 'Зелень',    icon: '🌿', key: 'cat_greens',     tint: '#22C55E', img: 'assets/cat-greens.jpg',     bg: 'linear-gradient(135deg,#22C55E,#16A34A)' },
+  { value: 'Зерновые',  icon: '🌾', key: 'cat_grains',     tint: '#D97706', img: 'assets/cat-grains.jpg',     bg: 'linear-gradient(135deg,#D97706,#B45309)' },
+  { value: 'Молочные',  icon: '🥛', key: 'cat_dairy',      tint: '#3B82F6', img: 'assets/cat-dairy.jpg',      bg: 'linear-gradient(135deg,#3B82F6,#2563EB)' },
+  { value: 'Мёд',       icon: '🍯', key: 'cat_honey',      tint: '#EAB308', img: 'assets/cat-honey.jpg',      bg: 'linear-gradient(135deg,#EAB308,#CA8A04)' },
 ];
 
 const HOW_IT_WORKS = [
@@ -31,9 +31,10 @@ async function renderHome() {
   app.innerHTML = pageShell(`
     <section class="hero v2 hero-fullscreen">
       <div class="hero-bg-overlay"></div>
+      <div class="hero-particles" id="hero-particles"></div>
       <div class="hero-content">
         <div class="hero-badge"><i class="fi fi-sr-leaf"></i> ${t('fresh_with_field')}</div>
-        <h1 class="hero-title">${t('hi')}, <span class="hero-name">${firstName}</span>!<br><span class="grad-text">${isFarmer ? t('sell_farm') : t('buy_farm')}</span> ${t('no_middlemen')}</h1>
+        <h1 class="hero-title">${t('hi')}, <span class="hero-name-white">${firstName}</span>!<br><span class="hero-grad-green">${isFarmer ? t('sell_farm') : t('buy_farm')}</span><br>${t('no_middlemen')}</h1>
         <p class="hero-sub">${isFarmer ? t('hero_farmer_sub') : t('hero_buyer_sub')}</p>
         <div class="hero-actions">${heroCta}</div>
         <div class="hero-stats">
@@ -41,6 +42,9 @@ async function renderHome() {
           <div class="stat"><b>100%</b><span>${t('all_farm')}</span></div>
           <div class="stat"><b>0%</b><span>${t('middlemen0')}</span></div>
         </div>
+      </div>
+      <div class="hero-scroll-hint">
+        <div class="scroll-arrow"></div>
       </div>
     </section>
 
@@ -52,8 +56,8 @@ async function renderHome() {
       <div class="cat-grid">
         ${HOME_CATEGORIES.map(c => `
           <div class="cat-card" onclick="router.go('/market?cat=${encodeURIComponent(c.value)}')" style="--tint:${c.tint}">
-            <div class="cat-card-img">
-              <img src="${c.img}" alt="${t(c.key)}" loading="lazy" onerror="this.style.display='none'" />
+            <div class="cat-card-img" style="background:${c.bg}">
+              <img src="${c.img}" alt="${t(c.key)}" loading="lazy" onerror="this.style.opacity='0'" />
               <div class="cat-overlay"></div>
             </div>
             <div class="cat-ic">${c.icon}</div>
@@ -131,6 +135,17 @@ async function renderHome() {
     if (e.message === 'BLOCKED') return;
     const grid = document.getElementById('home-products');
     if (grid) grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><p>⚠️ ${e.message}</p></div>`;
+  }
+
+  // Hero particles
+  const particlesEl = document.getElementById('hero-particles');
+  if (particlesEl) {
+    for (let i = 0; i < 18; i++) {
+      const p = document.createElement('div');
+      p.className = 'hero-particle';
+      p.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*6}s;animation-duration:${4+Math.random()*5}s;width:${2+Math.random()*4}px;height:${2+Math.random()*4}px;opacity:${0.2+Math.random()*0.5}`;
+      particlesEl.appendChild(p);
+    }
   }
 
   // init floating AI bubble
