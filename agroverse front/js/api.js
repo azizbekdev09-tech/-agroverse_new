@@ -2,7 +2,7 @@
 const IS_LOCAL = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
 const BASE_URL = IS_LOCAL
   ? `http://localhost:8000`
-  : 'https://agroverse-production-8df1.up.railway.app';
+  : 'https://agroversenew-production.up.railway.app';
 
 
 function getToken() {
@@ -125,7 +125,10 @@ const API = {
     const res = await request('GET', `/api/products/${id}`);
     return normalizeProduct(res);
   },
-  createProduct: (formData) => request('POST', '/api/products/', { formData }),
+  createProduct: (data) => {
+    if (data instanceof FormData) return request('POST', '/api/products/', { formData: data });
+    return request('POST', '/api/products/', { body: data });
+  },
   deleteProduct: (id)       => request('DELETE', `/api/products/${id}`),
 
   // Orders

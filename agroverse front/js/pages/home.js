@@ -1,12 +1,12 @@
 /* pages/home.js — stiljli bosh sahifa (fermер va xaridor) */
 
 const HOME_CATEGORIES = [
-  { value: 'Овощи',     icon: '🥦', key: 'cat_vegetables', tint: '#10B981', img: 'assets/cat-vegetables.png' },
-  { value: 'Фрукты',    icon: '🍎', key: 'cat_fruits',     tint: '#F59E0B', img: 'assets/cat-fruits.png' },
-  { value: 'Зелень',    icon: '🌿', key: 'cat_greens',     tint: '#22C55E', img: 'assets/cat-greens.png' },
-  { value: 'Зерновые',  icon: '🌾', key: 'cat_grains',     tint: '#D97706', img: 'assets/cat-grains.png' },
-  { value: 'Молочные',  icon: '🥛', key: 'cat_dairy',      tint: '#3B82F6', img: 'assets/cat-dairy.png' },
-  { value: 'Мёд',       icon: '🍯', key: 'cat_honey',      tint: '#EAB308', img: 'assets/cat-fruits.png' },
+  { value: 'Овощи',     icon: '🥦', key: 'cat_vegetables', tint: '#10B981', img: 'assets/cat-vegetables.jpg' },
+  { value: 'Фрукты',    icon: '🍎', key: 'cat_fruits',     tint: '#F59E0B', img: 'assets/cat-fruits.jpg' },
+  { value: 'Зелень',    icon: '🌿', key: 'cat_greens',     tint: '#22C55E', img: 'assets/cat-greens.jpg' },
+  { value: 'Зерновые',  icon: '🌾', key: 'cat_grains',     tint: '#D97706', img: 'assets/cat-grains.jpg' },
+  { value: 'Молочные',  icon: '🥛', key: 'cat_dairy',      tint: '#3B82F6', img: 'assets/cat-dairy.jpg' },
+  { value: 'Мёд',       icon: '🍯', key: 'cat_honey',      tint: '#EAB308', img: 'assets/cat-honey.jpg' },
 ];
 
 const HOW_IT_WORKS = [
@@ -29,9 +29,8 @@ async function renderHome() {
        <button class="btn btn-ghost btn-lg" onclick="router.go('/ai')"><i class="fi fi-rr-comment-alt"></i> ${t('ask_ai')}</button>`;
 
   app.innerHTML = pageShell(`
-    <section class="hero v2">
-      <div class="hero-glow"></div>
-      <div class="hero-grid-dots"></div>
+    <section class="hero v2 hero-fullscreen">
+      <div class="hero-bg-overlay"></div>
       <div class="hero-content">
         <div class="hero-badge"><i class="fi fi-sr-leaf"></i> ${t('fresh_with_field')}</div>
         <h1 class="hero-title">${t('hi')}, <span class="hero-name">${firstName}</span>!<br><span class="grad-text">${isFarmer ? t('sell_farm') : t('buy_farm')}</span> ${t('no_middlemen')}</h1>
@@ -42,12 +41,6 @@ async function renderHome() {
           <div class="stat"><b>100%</b><span>${t('all_farm')}</span></div>
           <div class="stat"><b>0%</b><span>${t('middlemen0')}</span></div>
         </div>
-      </div>
-      <div class="hero-art">
-        <div class="art-blob art-1">🍅</div>
-        <div class="art-blob art-2">🥕</div>
-        <div class="art-blob art-3">🌽</div>
-        <div class="art-blob art-4">🍇</div>
       </div>
     </section>
 
